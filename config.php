@@ -1,8 +1,8 @@
 <?php
 
 //腾瑞思智文档系统
-//20231223 PYLXU
-// 副本打包时间 2024年1月6日
+//20240208 PYLXU
+// 副本打包时间 2024年2月8日
 
 //核心配置 (非必要不更改)
 define('DOCS_DIRECTORY', 'docs/'); //文档存储位置
@@ -24,5 +24,5 @@ $AdminPassword = "RIS_DOCS"; //使用前更改默认莫玛
     $ShowRefrush = true;
     
 //附加信息
-$UpdateTime = "2023/1/6";
+$UpdateTime = "2024/2/8";
 ?>
