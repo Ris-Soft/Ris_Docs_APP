@@ -3,4 +3,4 @@
 
 ### 文档目录
 
-{{include('docs/directory-true.md')}}
+{{include('directory')}}

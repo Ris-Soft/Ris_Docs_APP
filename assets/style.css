@@ -1,0 +1,43 @@
+body {
+	display:flex;
+}
+#Main a {
+    text-decoration:auto!important;
+}
+code,pre {
+    /* color:rgb(201,209,217); */
+	font-family:Consolas;
+	text-align:left;
+	padding:2px;
+	padding-left:0.8em;
+	border-radius:5px;
+	counter-reset:line;
+	white-space:pre-wrap;
+    word-spacing:normal;
+	word-break:normal;
+	max-width:100%;
+    overflow:auto;
+}
+p {
+	margin:none;
+}
+Lead>ul {
+	list-style-type:none;
+	padding:0;
+	width:95%;
+}
+Lead>ul li a {
+	display:block;
+	padding:8px 16px;
+	text-decoration:none;
+	border-radius:5px;
+}
+Lead>ul li a:hover {
+	background-color:rgba(0,0,0,.2);
+}
+ul ul {
+    list-style-type:none
+}
+Lead>ul>ul>li a {
+	padding:4px 16px;
+}
