@@ -1,6 +1,4 @@
 <?php
-
-$zipFilePath = './RisDocs_Full.zip'; // 临时存储ZIP文件的路径  
 $extractPath = './'; // 解压目标目录  
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'install') {  
 // 远古版本支持
@@ -9,19 +7,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         unlink("./config.php");
     }
 
-//   更新模式验证
-if(file_exists("./assets/config.php") || file_exists("./config.php")) {
+if(file_exists("./config.php")) {
+    include './config.php';
+    if ($_POST['adminPassword'] !== $AdminPassword){
+        echo '安装失败：管理员密码错误！请重新进入网页后重试';  
+        exit;
+    }
+}elseif(file_exists("./assets/config.php")) {
     include './assets/config.php';
     if ($_POST['adminPassword'] !== $AdminPassword){
-        echo json_encode(['status' => 'fail', 'message' => '管理员密码错误！请重新进入网页后重试']);  
+        echo '安装失败：管理员密码错误！请重新进入网页后重试';  
         exit;
     }
 }
     // 下载
-    if(!file_exists("./assets/config.php") || file_exists("./config.php")) {
+    if(!file_exists("./assets/config.php") && !file_exists("./config.php")) {
         $downloadUrl = 'https://open.3r60.top/Project/RisDocs_Full.zip'; // 完整版下载地址  
+        $zipFilePath = './RisDocs_Full.zip'; // 临时存储ZIP文件的路径  
     } else {
         $downloadUrl = 'https://open.3r60.top/Project/RisDocs_Update.zip'; // 更新版下载地址 
+        $zipFilePath = './RisDocs_Update.zip'; // 临时存储ZIP文件的路径  
     }
     $file = fopen($zipFilePath, "wb");  
     if ($file) {  
@@ -54,7 +59,7 @@ $BlogURL = "NoShow";
 ';
 file_put_contents("./assets/config.php",$Php);
 }
-    echo json_encode(['status' => 'success', 'message' => '安装完成！']);  
+    echo '若此处无其他提示则安装完成！点击确认自动跳转（若存在报错代码请发送至群询问）';  
     exit;  
 }  
 
@@ -123,17 +128,11 @@ file_put_contents("./assets/config.php",$Php);
                         }  
                     },  
                     success: function(response) {  
-                        var data = JSON.parse(response);  
-                        if (data.status === 'success') {  
-                            alert(data.message);  
+                            alert(response);  
                             location.href = "./index.php";
-                        } else {  
-                            alert('安装过程中发生错误:'+data.message);  
-                             $('#installButton').text('下载并安装').prop('disabled', false);
-                        }  
                     },  
                     error: function() {  
-                        alert('安装失败，请检查您的网络连接或稍后重试。');  
+                        alert('请检查您的网络连接或稍后重试。');  
                         $('#installButton').text('下载并安装').prop('disabled', false);
                     }  
                 });  

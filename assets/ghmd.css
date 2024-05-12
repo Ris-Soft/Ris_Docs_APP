@@ -269,7 +269,7 @@
 .markdown-body h4,
 .markdown-body h5,
 .markdown-body h6 {
-  margin-top: 24px;
+  margin-top: 8px;
   margin-bottom: 16px;
   font-weight: 600;
   line-height: 1.25;
@@ -573,12 +573,12 @@
 }
 
 .markdown-body table tr {
-  background-color: #0d1117;
+  /* background-color: #0d1117; */
   border-top: 1px solid #21262d;
 }
 
 .markdown-body table tr:nth-child(2n) {
-  background-color: #161b22;
+  /* background-color: #161b22; */
 }
 
 .markdown-body table img {

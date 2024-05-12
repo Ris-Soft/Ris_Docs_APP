@@ -27,7 +27,17 @@ include './assets/config.php';
 		forceFilePutContents(DOCS_DIRECTORY.$_POST['name'].'.md',"新建空文档");
 	} elseif($_POST['action'] == "editPost") {
 		forceFilePutContents(DOCS_DIRECTORY.$_GET['article'].'.md',$_POST['content']);
+	} elseif($_POST['action'] == "deletePost") {
+    $file = DOCS_DIRECTORY.$_POST['file'];
+	if(is_dir($file)){
+		deleteDirectory($file);
+	}else{
+		$file = DOCS_DIRECTORY.$_POST['file'].".md";
+	if(file_exists($file)){
+        unlink($file);
+    }
 	}
+}
 }
 
 session_start();
@@ -84,9 +94,12 @@ include './assets/topbar.php';
 				<li><a href="admin.php?SE=<?php echo $_GET['SE']?>"><i class="bi bi-house"></i>&nbsp;管理中心</a></li>
 				<li><a href="admin.php?article=editSet&SE=<?php echo $_GET['SE']?>"><i class="bi bi-gear"></i>&nbsp;站点设置</a></li>
 				<li><a href="admin.php?article=newPost&SE=<?php echo $_GET['SE']?>"><i class="bi bi-plus-square"></i>&nbsp;新建文章</a></li>
+				<li><a href="admin.php?article=delPost&SE=<?php echo $_GET['SE']?>"><i class="bi bi-trash3"></i>&nbsp;删除文章</a></li>
 			</ul>
 			 - 文章列表
+			 <code markdown>
 			<?PHP loadDirectory('admin'); ?>
+			</code>
 				<a href="./">
 					返回前台
 				</a>
@@ -106,12 +119,6 @@ include './assets/topbar.php';
 						<input class="Input" name="WebName" placeholder="网站名称" style="margin-top:5px;margin-bottom:5px" value="<?php echo $WebName ?>"><br>
 						管理员密码:<br>
 						<input type="password" name="AdminPassword" class="Input" placeholder="管理员密码" style="margin-top:5px;margin-bottom:5px" value="<?php echo $AdminPassword ?>" required><br>
-						官网地址:<br>
-						<input class="Input" name="HomeUrl" placeholder="官网地址" style="margin-top:5px;margin-bottom:5px" value="<?php echo $HomeURL ?>"><br>
-						Github地址[NoShow表示不显示]:<br>
-						<input class="Input" name="GithubUrl" placeholder="Github地址" style="margin-top:5px;margin-bottom:5px" value="<?php echo $GithubURL ?>"><br>
-						博客地址[NoShow表示不显示]:<br>
-						<input class="Input" name="BlogUrl" placeholder="博客地址" style="margin-top:5px;margin-bottom:5px" value="<?php echo $BlogURL ?>"><br>
 						安全入口:<button type="button" onclick="alert('若填写此项，进入admin.php时需附带?SE=安全密码的 GET参数，同时右栏的管理入口会隐藏')">了解...</button><br>
 						<input class="Input" name="SecurityEntrance" placeholder="安全入口" style="margin-top:5px;margin-bottom:5px" value="<?php echo $SecurityEntrance ?>"><br>
 						伪静态模式[true表示启用]:<button type="button" onclick="alert('第三方提供方案,复制下面地址访问查看使用方法（仅支持软件的index.php在网站主目录时启用）    https://bbs.0rst.com/t/19.html')">了解...</button><br>
@@ -127,6 +134,18 @@ include './assets/topbar.php';
 				<input type="hidden" name="action" value="createPost">
 				<input class="Input" name="name" placeholder="输入文章名称" style="width:280px;margin-bottom:20px"><br>
 				<button style="width:280px;margin-bottom:20px" class="Button2">创建</button>
+				</form>
+				</div>
+			</div>
+					<?php elseif($_GET['article'] == "delPost"): ?>
+			<div id="main-display">
+			<div class="moudle" style="width:320px;margin:auto">
+				<h3>删除文章</h3>
+				<span>输入正确目录才可正确删除</span><br><br>
+				<form method="POST" action="" name="DelPost">
+				<input type="hidden" name="action" value="deletePost">
+				<input class="Input" name="file" placeholder="输入文章名称" style="width:280px;margin-bottom:20px"><br>
+				<button style="width:280px;margin-bottom:20px" class="Button2">确认删除</button>
 				</form>
 				</div>
 			</div>
@@ -197,6 +216,21 @@ if($ver !== $localVersion){
 	echo '<script>notice("success","RisDocs新版本已发布: ' . htmlspecialchars($ver) . '&nbsp; <a href=\"./install.php\" style=\"color:blue !important\"><button>立即更新</button></a>&nbsp;<button onclick=\"alert(\''.$update.'\')\">查看新内容</button>")</script>';
 	 }
 ?>
+			<?php if($Rewrite == "true"): ?>
+			<script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/marked.min.js"></script>
+			<?php else: ?>
+			<script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/marked.min.js"></script>
+			<script src="./assets/editormd/lib/marked.min.js"></script>
+			<?php endif; ?>
+	<script>
+	function LoadMD(){
+     var m = document.querySelectorAll('code[markdown]');
+    for (var i = 0; i < m.length; i++) {
+        m[i].outerHTML = marked.parse(m[i].innerHTML.trim());
+    }
+	}
+	LoadMD();
+	</script>
 </body>
 
 </html>

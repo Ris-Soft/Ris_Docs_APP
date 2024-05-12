@@ -5,5 +5,5 @@ $HomeURL = "#";
 $GithubURL = "https://github.com/PYLXU/Ris_Docs_APP/";
 $BlogURL = "NoShow";
 $Rewrite = "false";
-$SecurityEntrance = "11111";
+$SecurityEntrance = "";
 ?>

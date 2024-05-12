@@ -2,12 +2,10 @@
 //引入配置项
 include __DIR__.'/config.php';
 include __DIR__.'/plugin.php';
-include __DIR__.'/md2html.php';
 //核心配置 (非必要不更改)
-$localVersion = "1.4.2";
+$localVersion = "1.6.1";
 define('DOCS_DIRECTORY', 'docs/'); //文档存储位置
 define('DOCS_404', 'docs/404.md'); //404文档存储位置
-$Parsedown = new Parsedown();
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';
 $host = $_SERVER['HTTP_HOST'];
 $uri = $_SERVER['REQUEST_URI'];
@@ -22,13 +20,12 @@ $Http_Host = $protocol . $host . $uri;
 $Http_Host_RW = $_SERVER['HTTP_HOST'];
 //定义函数
 function loadArticle($Name) {
-    global $Parsedown;
     $file = DOCS_DIRECTORY.$Name.".md";
     if (file_exists($file)) {
-        echo $Parsedown -> text(includeSet(includeFileContent("\n".file_get_contents($file))));
+        echo includeSet(includeFileContent("\n".file_get_contents($file)));
     } else {
         $file = DOCS_404;
-        echo $Parsedown -> text(includeSet(includeFileContent("\n".file_get_contents($file))));
+        echo includeSet(includeFileContent("\n".file_get_contents($file)));
     }
 }
 
@@ -60,10 +57,9 @@ function includeSet($markdownContent) {
 }
 
 function loadDirectory($mode = "common") {
-    global $Parsedown;
 
         $content = includeFileContent(generateMDIndex(DOCS_DIRECTORY, '', true,$mode));
-        echo $Parsedown -> text($content);
+        echo $content;
 }
 // 判断网页标题
 $purpose = $_GET['article'];
@@ -73,6 +69,7 @@ if (isset($purpose)) {
     $pageName = "文档不存在";
     } else {
     $pageName = preg_replace('/\{M=\d+\}/', '', $purpose);
+    $pageName = str_replace('/', '>', $pageName);
     }
 } else {
     $pageName = "首页";
@@ -95,11 +92,13 @@ function generateMDIndex($directory, $parentPath = '', $isRoot = false ,$mode) {
         if ($file != '.' && $file != '..' && $file != 'home.md' && $file != 'index.md' && $file != 'img' && $file != 'directory-true.md' && $file != 'directory.md' && $file != '404.md') {
             $filePath = $directory.
             '/'.$file;
+
             if (is_dir($filePath)) {
                 // 如果是文件夹，保存到子目录数组
                 $subdirectories[] = $file;
             }
             elseif(pathinfo($file, PATHINFO_EXTENSION) == 'md') {
+                
                 // 如果是MD文件，保存到子文件数组
                 $subfiles[] = $file;
             }
@@ -149,6 +148,7 @@ function generateMDIndex($directory, $parentPath = '', $isRoot = false ,$mode) {
         } else {
             $articleLink = "{$Http_Host}?article={$parentPath}".urlencode($articleName)."{$linkPlugin}";
         }
+        
         // 生成链接
         $mdContent .= str_repeat("  ", count(explode("/", $parentPath)) - 1)."- [".preg_replace('/\{M=\d+\}/', '', $articleName)."]($articleLink)\n";
     }
@@ -163,6 +163,7 @@ function generateMDIndex($directory, $parentPath = '', $isRoot = false ,$mode) {
         }
         $mdContent .= generateMDIndex($directory.'/'.$dir, "{$parentPath}".urlencode($dir).'/','',$mode);
     }
+
 
     return $mdContent;
 }
@@ -189,4 +190,14 @@ function forceFilePutContents ($filepath, $message){
     } catch (Exception $e) {
         echo"ERR: error writing '$message' to '$filepath',". $e->getMessage();
     }
+}
+function deleteDirectory($dir) {
+    if (!is_dir($dir)) {
+        return false;
+    }
+    $files = array_diff(scandir($dir), array('.', '..'));
+    foreach ($files as $file) {
+        (is_dir("$dir/$file")) ? deleteDirectory("$dir/$file") : unlink("$dir/$file");
+    }
+    return rmdir($dir);
 }
