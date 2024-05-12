@@ -2732,7 +2732,7 @@
   padding-bottom: 0.3em;
   font-size: 2.25em;
   line-height: 1.2;
-  border-bottom: 1px solid #eee;
+  /* border-bottom: 1px solid #eee; */
 }
 
 .markdown-body h1 .anchor {
@@ -2743,7 +2743,7 @@
   padding-bottom: 0.3em;
   font-size: 1.75em;
   line-height: 1.225;
-  border-bottom: 1px solid #eee;
+  /* border-bottom: 1px solid #eee; */
 }
 
 .markdown-body h2 .anchor {
@@ -2870,12 +2870,12 @@
 }
 
 .markdown-body table tr {
-  background-color: #fff;
+  /* background-color: #fff; */
   border-top: 1px solid #ccc;
 }
 
 .markdown-body table tr:nth-child(2n) {
-  background-color: #f8f8f8;
+  /* background-color: #f8f8f8; */
 }
 
 .markdown-body img {
@@ -3114,10 +3114,10 @@
   text-align: left;
   font-size: 14px;
   line-height: 1.6;
-  padding: 20px;
+  /* padding: 20px; */
   overflow: auto;
   width: 100%;
-  background-color: #fff;
+  background-color: transparent;
 }
 .editormd-preview-container blockquote, .editormd-html-preview blockquote {
   color: #666;
@@ -3141,15 +3141,15 @@
   background: none;
 }
 .editormd-preview-container code, .editormd-html-preview code {
-  border: 1px solid #ddd;
-  background: #f6f6f6;
+  border: 1px solid #b3b1b13b;
+  background: #282c34;
   padding: 3px;
   border-radius: 3px;
   font-size: 14px;
 }
 .editormd-preview-container pre, .editormd-html-preview pre {
-  border: 1px solid #ddd;
-  background: #f6f6f6;
+  border: 1px solid #b3b1b13b;
+  background: #282c34;
   padding: 10px;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -3164,7 +3164,7 @@
   font-family: "YaHei Consolas Hybrid", Consolas, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, monospace, monospace;
 }
 .editormd-preview-container table thead tr, .editormd-html-preview table thead tr {
-  background-color: #F8F8F8;
+  /* background-color: #F8F8F8; */
 }
 .editormd-preview-container p.editormd-tex, .editormd-html-preview p.editormd-tex {
   text-align: center;
@@ -3194,63 +3194,63 @@
 /*! Pretty printing styles. Used with prettify.js. */
 /* SPAN elements with the classes below are added by prettyprint. */
 .pln {
-  color: #000;
+  color: white !important;
 }
 
 /* plain text */
 @media screen {
   .str {
-    color: #080;
+    color: #080 !important;
   }
 
   /* string content */
   .kwd {
-    color: #008;
+    color: #008 !important;
   }
 
   /* a keyword */
   .com {
-    color: #800;
+    color: #800 !important;
   }
 
   /* a comment */
   .typ {
-    color: #606;
+    color: #606 !important;
   }
 
   /* a type name */
   .lit {
-    color: #066;
+    color: #066!important;
   }
 
   /* a literal value */
   /* punctuation, lisp open bracket, lisp close bracket */
   .pun, .opn, .clo {
-    color: #660;
+    color: #660!important;
   }
 
   .tag {
-    color: #008;
+    color: #008!important;
   }
 
   /* a markup tag name */
   .atn {
-    color: #606;
+    color: #606!important;
   }
 
   /* a markup attribute name */
   .atv {
-    color: #080;
+    color: #080!important;
   }
 
   /* a markup attribute value */
   .dec, .var {
-    color: #606;
+    color: #606!important;
   }
 
   /* a declaration; a variable name */
   .fun {
-    color: red;
+    color: red!important;
   }
 
   /* a function name */
@@ -3258,43 +3258,43 @@
 /* Use higher contrast and text-weight for printable form. */
 @media print, projection {
   .str {
-    color: #060;
+    color: #060!important;
   }
 
   .kwd {
-    color: #006;
+    color: #006!important;
     font-weight: bold;
   }
 
   .com {
-    color: #600;
+    color: #600!important;
     font-style: italic;
   }
 
   .typ {
-    color: #404;
+    color: #404!important;
     font-weight: bold;
   }
 
   .lit {
-    color: #044;
+    color: #044!important;
   }
 
   .pun, .opn, .clo {
-    color: #440;
+    color: #440!important;
   }
 
   .tag {
-    color: #006;
+    color: #006!important;
     font-weight: bold;
   }
 
   .atn {
-    color: #404;
+    color: #404!important;
   }
 
   .atv {
-    color: #060;
+    color: #060!important;
   }
 }
 /* Put a border around prettyprinted code snippets. */
@@ -3332,16 +3332,17 @@ li.L9 {
 
 .editormd-preview-container pre.prettyprint, .editormd-html-preview pre.prettyprint {
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #b3b1b13b;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
 .editormd-preview-container ol.linenums, .editormd-html-preview ol.linenums {
-  color: #999;
+  color: #c3c3c3 !important;
   padding-left: 2.5em;
 }
 .editormd-preview-container ol.linenums li, .editormd-html-preview ol.linenums li {
   list-style-type: decimal;
+  color:#c3c3c3!important;
 }
 .editormd-preview-container ol.linenums li code, .editormd-html-preview ol.linenums li code {
   border: none;
@@ -3404,7 +3405,7 @@ li.L9 {
   border-radius: 4px;
 }
 .editormd-preview-container .editormd-toc-menu > .markdown-toc > ul > li a, .editormd-html-preview .editormd-toc-menu > .markdown-toc > ul > li a {
-  color: #666;
+  color: #666 !important;
   padding: 6px 10px;
   display: block;
   -webkit-transition: background-color 500ms ease-out;
@@ -3467,12 +3468,13 @@ li.L9 {
   padding: 5px 0 10px 10px;
   line-height: 1;
   border-bottom: 1px solid #eee;
+  color: black!important;
 }
 .editormd-preview-container .editormd-toc-menu h1 .fa, .editormd-html-preview .editormd-toc-menu h1 .fa {
   padding-left: 10px;
 }
 .editormd-preview-container .editormd-toc-menu .toc-menu-btn, .editormd-html-preview .editormd-toc-menu .toc-menu-btn {
-  color: #666;
+  color: #666!important;
   min-width: 180px;
   padding: 5px 10px;
   border-radius: 4px;
@@ -3483,6 +3485,7 @@ li.L9 {
   /* Firefox 4.0~16.0 */
   transition: background-color 500ms ease-out;
   /* IE >9, FF >15, Opera >12.0 */
+  background-color:#ddd;
 }
 .editormd-preview-container .editormd-toc-menu .toc-menu-btn:hover, .editormd-html-preview .editormd-toc-menu .toc-menu-btn:hover {
   background-color: #f6f6f6;
