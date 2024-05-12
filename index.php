@@ -17,9 +17,11 @@ include './assets/function.php';
 			<?php if($Rewrite == "true"): ?>
 			<link rel="stylesheet" href="//<?php echo $Http_Host_RW ?>/assets/ghmd.css">
 			<link rel="stylesheet" href="//<?php echo $Http_Host_RW ?>/assets/style.css">
+			<link rel="stylesheet" href="//<?php echo $Http_Host_RW ?>/assets/editormd/css/editormd.preview.css" />
 			<?php else: ?>
 			<link rel="stylesheet" href="./assets/ghmd.css">
 			<link rel="stylesheet" href="./assets/style.css">
+			<link rel="stylesheet" href="./assets/editormd/css/editormd.preview.css" />
 			<?php endif; ?>
 </head>
 <body>
@@ -49,7 +51,7 @@ include './assets/topbar.php';
 		</Lead>
 		<!--主要部分-->
 		<Main id="Main" class="markdown-body" style="padding-top:6px">
-		<span class="colorNoToggle" style="font-size:12px;color:rgb(180,180,180);width:100%"><?php 
+		<span class="colorNoToggle" style="font-size:12px;color:rgb(180,180,180);width:100%;"><?php 
 		echo $WebName.'>'.$pageName ?>&nbsp;&nbsp;&nbsp;
 		<span id="toolBox">
 			<a href="javascript:startPrint();" class="colorNoToggle">
@@ -60,19 +62,54 @@ include './assets/topbar.php';
 			复制链接</a>
 		</span>
 		</span>
-			<code markdown>
-			<?PHP if ($_GET[ 'article']=="" || $_GET[ 'article']=="home" ) { loadArticle('home'); } else { loadArticle($_GET[ 'article']); } ?>
-				</code>
+            <div style="margin-top:10px" id="test-editormd-view">
+               <textarea style="display:none" name="test-editormd-markdown-doc">
+			   <?php if ($_GET[ 'article']=="" || $_GET[ 'article']=="home" ) { loadArticle('home'); } else { loadArticle($_GET[ 'article']); } ?>
+			   </textarea>               
+            </div>
 		</Main>
 	</div>
 	<script src="https://assets.3r60.top/v2/package-end.js"></script>
+	<script src="https://assets.3r60.top/Jquery/jquery-3.5.1.js"></script>
 			<?php if($Rewrite == "true"): ?>
 			<script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/marked.min.js"></script>
+        <script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/marked.min.js"></script>
+        <script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/prettify.min.js"></script>
+        <script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/raphael.min.js"></script>
+        <script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/underscore.min.js"></script>
+        <script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/sequence-diagram.min.js"></script>
+        <script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/flowchart.min.js"></script>
+        <script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/jquery.flowchart.min.js"></script>
+        <script src="//<?php echo $Http_Host_RW ?>/assets/editormd/editormd.js"></script>
 			<?php else: ?>
-			<script src="//<?php echo $Http_Host_RW ?>/assets/editormd/lib/marked.min.js"></script>
+        <script src="assets/editormd/lib/marked.min.js"></script>
+        <script src="assets/editormd/lib/prettify.min.js"></script>
+        <script src="assets/editormd/lib/raphael.min.js"></script>
+        <script src="assets/editormd/lib/underscore.min.js"></script>
+        <script src="assets/editormd/lib/sequence-diagram.min.js"></script>
+        <script src="assets/editormd/lib/flowchart.min.js"></script>
+        <script src="assets/editormd/lib/jquery.flowchart.min.js"></script>
+        <script src="assets/editormd/editormd.js"></script>
 			<script src="./assets/editormd/lib/marked.min.js"></script>
 			<?php endif; ?>
-	<script>
+        <script type="text/javascript">
+            $(function() {
+                var testEditormdView;
+				    $(function() {
+					testEditormdView = editormd.markdownToHTML("test-editormd-view", {
+                        htmlDecode      : true, 
+                        toc             : true,
+                        tocm            : true,
+                        emoji           : true,
+                        taskList        : true,
+                        tex             : true,  // 默认不解析
+                        flowChart       : true,  // 默认不解析
+                        sequenceDiagram : true,  // 默认不解析
+                    });
+					});
+            });
+</script>
+<script>
 function copyUrl(id) {
     $("body").after("<input id='copyVal'></input>");
     var text = id;
