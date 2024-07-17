@@ -1,6 +1,3 @@
-body {
-	display:flex;
-}
 #Main a {
     text-decoration:auto!important;
 }
@@ -20,20 +17,6 @@ code,pre {
 }
 p {
 	margin:none;
-}
-Lead>ul {
-	list-style-type:none;
-	padding:0;
-	width:95%;
-}
-Lead>ul li a {
-	display:block;
-	padding:8px 16px;
-	text-decoration:none;
-	border-radius:5px;
-}
-Lead>ul li a:hover {
-	background-color:rgba(0,0,0,.2);
 }
 ul ul {
     list-style-type:none

@@ -48,8 +48,8 @@ window.addEventListener(\'load\', function() {
     }
 });
 </script>';
-ob_flush();
-flush();
+// ob_flush();
+// flush();
 ?>
 	<!--遮盖层-->
 	<div class="back-under" id="back-under">
