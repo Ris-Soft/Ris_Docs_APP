@@ -97,7 +97,7 @@
 .editormd-toolbar {
   width: 100%;
   min-height: 37px;
-  /* background: #fff; */
+  background: #fff;
   display: none;
   position: absolute;
   top: 0;
@@ -136,7 +136,7 @@
 }
 .editormd-menu > li > a {
   outline: 0;
-  color: #999999;
+  color: #666;
   display: inline-block;
   min-width: 24px;
   font-size: 16px;
@@ -347,10 +347,9 @@
 .editormd-dialog-info .editormd-dialog-close {
   top: 10px;
   right: 10px;
-  color:black!important;
 }
 .editormd-dialog-info p > a, .editormd-dialog-info .hover-link:hover {
-  color: #2196F3 !important;
+  color: #2196F3;
 }
 .editormd-dialog-info .hover-link {
   color: #666;
@@ -409,7 +408,7 @@
 .editormd-container-mask {
   z-index: 20;
   display: block;
-  background-color: #dcdcdc;
+  background-color: #fff;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
@@ -675,7 +674,7 @@
   overflow: auto;
   line-height: 1.6;
   display: none;
-  /* background: #fff; */
+  background: #fff;
 }
 
 .editormd .CodeMirror {
@@ -3082,7 +3081,7 @@
 @font-face {
   font-family: 'editormd-logo';
   src: url("../fonts/editormd-logo.eot?-5y8q6h");
-  src: url("../fonts/editormd-logo.eot?#iefix-5y8q6h") format("embedded-opentype"), url("../fonts/editormd-logo.woff?-5y8q6h") format("woff"), url("../fonts/editormd-logo.ttf?-5y8q6h") format("truetype"), url("../fonts/editormd-logo.svg?-5y8q6h#icomoon") format("svg");
+  src: url(".../fonts/editormd-logo.eot?#iefix-5y8q6h") format("embedded-opentype"), url("../fonts/editormd-logo.woff?-5y8q6h") format("woff"), url("../fonts/editormd-logo.ttf?-5y8q6h") format("truetype"), url("../fonts/editormd-logo.svg?-5y8q6h#icomoon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -3173,7 +3172,7 @@
 .markdown-body {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-  /* color: #333; */
+  color: #333;
   overflow: hidden;
   font-family: "Microsoft YaHei", Helvetica, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", "Monaco", monospace, Tahoma, STXihei, "华文细黑", STHeiti, "Helvetica Neue", "Droid Sans", "wenquanyi micro hei", FreeSans, Arimo, Arial, SimSun, "宋体", Heiti, "黑体", sans-serif;
   font-size: 16px;
@@ -3260,7 +3259,7 @@
 }
 
 .markdown-body a {
-  color: #4183c4 ;
+  color: #4183c4;
   text-decoration: none;
 }
 
@@ -3509,7 +3508,7 @@
 .markdown-body table,
 .markdown-body pre {
   margin-top: 0;
-  /* margin-bottom: 16px; */
+  margin-bottom: 16px;
 }
 
 /*
@@ -3587,12 +3586,12 @@
 }
 
 .markdown-body table tr {
-  background-color: #ffffff36;
+  background-color: #fff;
   border-top: 1px solid #ccc;
 }
 
 .markdown-body table tr:nth-child(2n) {
-  background-color: #f8f8f849;
+  background-color: #f8f8f8;
 }
 
 .markdown-body img {
@@ -3637,7 +3636,7 @@
   overflow: auto;
   font-size: 85%;
   line-height: 1.45;
-  /* background-color: #f7f7f7; */
+  background-color: #f7f7f7;
   border-radius: 3px;
 }
 
@@ -3674,7 +3673,7 @@
   line-height: 10px;
   color: #555;
   vertical-align: middle;
-  /* background-color: #fcfcfc; */
+  background-color: #fcfcfc;
   border: solid 1px #ccc;
   border-bottom-color: #bbb;
   border-radius: 3px;
@@ -3834,7 +3833,7 @@
   padding: 20px;
   overflow: auto;
   width: 100%;
-  /* background-color: #fff; */
+  background-color: #fff;
 }
 .editormd-preview-container blockquote, .editormd-html-preview blockquote {
   color: #666;
@@ -3849,7 +3848,7 @@
   margin-right: 4px;
 }
 .editormd-preview-container abbr, .editormd-html-preview abbr {
-  /* background: #ffffdd; */
+  background: #ffffdd;
 }
 .editormd-preview-container hr, .editormd-html-preview hr {
   height: 1px;
@@ -3859,14 +3858,14 @@
 }
 .editormd-preview-container code, .editormd-html-preview code {
   border: 1px solid #ddd;
-  /* background: #f6f6f6; */
+  background: #f6f6f6;
   padding: 3px;
   border-radius: 3px;
   font-size: 14px;
 }
 .editormd-preview-container pre, .editormd-html-preview pre {
   border: 1px solid #ddd;
-  /* background: #f6f6f6; */
+  background: #f6f6f6;
   padding: 10px;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -3881,7 +3880,7 @@
   font-family: "YaHei Consolas Hybrid", Consolas, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, monospace, monospace;
 }
 .editormd-preview-container table thead tr, .editormd-html-preview table thead tr {
-  /* background-color: #F8F8F8; */
+  background-color: #F8F8F8;
 }
 .editormd-preview-container p.editormd-tex, .editormd-html-preview p.editormd-tex {
   text-align: center;
@@ -4436,7 +4435,7 @@ hr.editormd-page-break {
   border-color: #1a1a17;
 }
 .editormd-theme-dark .editormd-menu > li > a {
-  color: #777 !important;
+  color: #777;
   border-color: #1a1a17;
 }
 .editormd-theme-dark .editormd-menu > li > a:hover, .editormd-theme-dark .editormd-menu > li > a.active {
