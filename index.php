@@ -107,6 +107,7 @@ include './assets/function.php';
                 tocm            : true,
                 emoji           : true,
                 taskList        : true,
+                html            : true,
                 tex             : true,  // 默认不解析
                 flowChart       : true,  // 默认不解析
                 sequenceDiagram : true,  // 默认不解析
@@ -147,6 +148,7 @@ function refreshMarkdownContent() {
         toc             : true,
         tocm            : true,
         emoji           : true,
+        html            : true,
         taskList        : true,
         tex             : true,  
         flowChart       : true,  

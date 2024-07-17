@@ -282,6 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && $_SESSION['RD_Password'] == $AdminPa
                   toc: true,
                   tocm: true,
                   emoji: true,
+                  html: true,
                   taskList: true,
                   tex: true,
                   flowChart: true,
@@ -359,7 +360,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && $_SESSION['RD_Password'] == $AdminPa
                     <span class="text-small">版本：' . $infoData['pluginVersion'] . '</span>
                     </span>
                     <button type="submit" class="btn btn-shadow btn-danger btn-md ml-20">卸载</button>&nbsp;
-                    <a type="button" href="https://docs.3r60.top/Project/admin.php?mode=plugins&plugin=' . $dir . '&SE=" class="btn btn-shadow btn-primary btn-md">配置</a>
+                    <a type="button" href="./admin.php?mode=plugins&plugin=' . $dir . '&SE=" class="btn btn-shadow btn-primary btn-md">配置</a>
               </card>
               </form>';
                   } else {
@@ -430,7 +431,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && $_SESSION['RD_Password'] == $AdminPa
             $infoContentIndex = file_get_contents($infoFileIndex);
             $infoDataIndex = json_decode($infoContentIndex, true);
             ?>
-            <h2><?php echo $infoDataIndex['pluginIcon'] ?? '<i class="bi bi-plugin"></i>' ?>&nbsp;<?php echo $infoDataIndex['pluginName'] ?></h2>
+            <h2><i class="<?php echo $infoDataIndex['pluginIcon'] ?? 'bi bi-plugin' ?>"></i>&nbsp;<?php echo $infoDataIndex['pluginName'] ?></h2>
             <form action="" method="POST">
               <input type="hidden" name="action" value="editPluginSet">
               <?php
@@ -579,6 +580,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && $_SESSION['RD_Password'] == $AdminPa
         htmlDecode: true,
         toc: true,
         tocm: true,
+        html: true,
         emoji: true,
         taskList: true,
         tex: true,
