@@ -3,7 +3,7 @@
 include __DIR__ . '/config.php';
 include __DIR__ . '/plugin.php';
 //核心配置 (非必要不更改)
-$localVersion = "2.0";
+$localVersion = "2.0-r";
 define('DOCS_DIRECTORY', __DIR__ . '/../docs/'); //文档存储位置
 define('DOCS_404',  __DIR__ . '/../docs/404.md'); //404文档存储位置
 define('CONFIG_PATH', __DIR__ . '/config.php');
@@ -22,7 +22,7 @@ $Http_Host_RW = $_SERVER['HTTP_HOST'];
 includePlugin(basename($_SERVER['SCRIPT_NAME']) == 'admin.php' ? 'admin' : 'user');
 //定义函数
 // - 插件引入
-function includePlugin($env_requestPage,$input = '')
+function includePlugin($env_requestPage, $input = '')
 {
   $baseDir = __DIR__ . '/plugins';
   $dirs = scandir($baseDir);
@@ -39,10 +39,6 @@ function includePlugin($env_requestPage,$input = '')
         if ($infoData !== null) {
           $pluginName = $dir;
           require(__DIR__ . "/plugins/$dir/functions.php");
-          if (!isset($return)) {
-              return $input;
-          }
-          return $return;
         } else {
           echo "<script>alert('插件错误:无法解析插件 $dir 的 JSON信息 数据，此插件跳过加载')</script>";
         }
@@ -51,6 +47,10 @@ function includePlugin($env_requestPage,$input = '')
       }
     }
   }
+  if (!isset($return)) {
+    return $input;
+  }
+  return $return;
 }
 function loadArticle($Name)
 {
@@ -93,7 +93,7 @@ function includeSet($docs_fullContent)
       return $matches[0];
     }
   }, $docs_fullContent);
-  $docs_fullContent = includePlugin("docsTransform",$docs_fullContent);
+  $docs_fullContent = includePlugin("docsTransform", $docs_fullContent);
   return $docs_fullContent;
 }
 
@@ -251,7 +251,7 @@ function generateHTMLIndex($directory, $parentPath = '', $isRoot = false, $mode)
     $file = $fileNames[$articleName];
     $encodedName = urlencode($articleName);
     if ($Rewrite == "true" && $mode == "common") {
-      $articleLink = '//' . $Http_Host_RW . '/article/' . $parentPath . $encodedName;
+      $articleLink = '//' . $Http_Host_RW . '/article/' . ($parentPath ? $parentPath . '/' . $encodedName : $encodedName);
     } else {
       $articleLink = $Http_Host . $linkPlugin . 'article=' . ($parentPath ? $parentPath . '/' . $encodedName : $encodedName);
     }
