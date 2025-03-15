@@ -1,0 +1,32 @@
+{
+  "Update": {
+    "files": [
+      "index.php",
+      "admin.php",
+      "install.php",
+      "assets/function.php",
+      "assets/style.css",
+      "assets/plugins/说明",
+      "assets/imageUpload.php"
+    ]
+  },
+  "Full": {
+    "files": [
+      "index.php",
+      "admin.php",
+      "install.php",
+      "favicon.ico",
+      "assets/function.php",
+      "assets/style.css",
+      "assets/config.php",
+      "assets/plugin.php",
+      "assets/plugins/说明",
+      "assets/imageUpload.php",
+      "docs/404.md",
+      "docs/home.md",
+      "docs/{M=1}软件说明.md",
+      "docs/伪静态使用方法.md",
+      "docs/功能测试.md"
+    ]
+  }
+}
