@@ -169,14 +169,14 @@ include './assets/function.php';
                         }
                         ?>
                     </div>
-                    <?php if ($singleArticle) :?>
-                        <footer></footer>
-                    <?php endif; ?>
                     <?php if (!$singleArticle): ?>
                         <div class="article-toc" id="article-toc"></div>
                         <span class="toc-placeholder"></span>
                     <?php endif; ?>
                 </div>
+                <?php if ($singleArticle): ?>
+                    <footer></footer>
+                <?php endif; ?>
             </content>
 
         <?php else: ?>
@@ -194,8 +194,8 @@ include './assets/function.php';
                     <div class="article-container">
                         <div style="margin-top:10px" id="test-editormd-view">
                             <textarea style="display:none" name="test-editormd-markdown-doc">
-                                                                    <?php echo $mdContent; ?>
-                                                                </textarea>
+                                                                        <?php echo $mdContent; ?>
+                                                                    </textarea>
                         </div>
                     </div>
                 </div>
@@ -331,7 +331,7 @@ include './assets/function.php';
                 const level = parseInt(heading.tagName.substring(1));
                 const tag = heading.tagName.toLowerCase();
                 counters[tag]++;
-                
+
                 // Generate unique ID based on text content
                 const uniqueId = `${tag}-${counters[tag]}-${heading.textContent.toLowerCase().replace(/\s+/g, '-')}`;
                 heading.id = uniqueId;
