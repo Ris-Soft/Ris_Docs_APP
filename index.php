@@ -169,6 +169,9 @@ include './assets/function.php';
                         }
                         ?>
                     </div>
+                    <?php if ($singleArticle) :?>
+                        <footer></footer>
+                    <?php endif; ?>
                     <?php if (!$singleArticle): ?>
                         <div class="article-toc" id="article-toc"></div>
                         <span class="toc-placeholder"></span>
