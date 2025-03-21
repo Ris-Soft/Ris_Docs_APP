@@ -44,6 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
         }
     } elseif (!empty($_POST['action']) && $_POST['action'] == "editPost") {
         $category = $_POST['category'];
+        if ($_POST['title'] == 'home' && $category != 'default') {
+            echo '$(document).ready(function() { setTimeout(createMessage("非default分类下文章名不能为home", "danger"), 100); });';
+            exit;
+        }
+        if ($_POST['title'] == 'index') {
+            echo '$(document).ready(function() { setTimeout(createMessage("文章名不能为index", "danger"), 100); });';  
+            exit;
+        }
         if ($_GET['article'] == '') {
             echo '$(document).ready(function() { setTimeout(createMessage("文章名称不可为空", "danger"), 100); });';
         } elseif ($_GET['article'] == 'newPost') {
@@ -59,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                 $newFilePath = DOCS_DIRECTORY . $category . '/' . $_POST['title'] . '.md';
                 rename($oldFilePath, $newFilePath);
                 forceFilePutContents($newFilePath, $_POST['content']);
-                header('location: ./admin.php?mode=editPost&article=' . $category . '/' . $_POST['title'] . '&SE=' . $_GET['SE']);
+                header('location: ./admin.php?mode=editPost&article=' . $category . '/' . $_POST['title'] . '&SE=' . $_GET['SE'] . "&category=" . $_GET['category']);
             } else {
                 if ($_GET['category'] == 'default' && $_GET['article'] == 'home') {
                     forceFilePutContents(DOCS_DIRECTORY . 'home.md', $_POST['content']);
@@ -218,6 +226,18 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                 </ul>
                 <script>
 
+                    function bindEvent() {
+                        $('.list a').off('click contextmenu');
+                        $('.list a').on('contextmenu', deletePostHandler);
+                        $('.list a').on('click', function (event) {
+                            event.preventDefault();
+                            history.pushState('', '', this.href);
+                            fetchAndReplaceContent(this.href, 'title,content', 'title,content', () => {
+                                setActiveLinkInList($('.list'));
+                            });
+                        });
+                    }
+
                     function deletePostHandler(e) {
                         e.preventDefault();
                         const article = $(this).attr('href').split('article=')[1].split('&')[0];
@@ -230,13 +250,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                                 window.location.href,
                                 '.list',
                                 '.list',
-                                null,
+                                bindEvent,
                                 formData
                             );
                         });
                     }
 
-                    $('.list a').on('contextmenu', deletePostHandler);
+                    bindEvent();
 
                     function createNewCategory() {
                         createDialog('type', 'primary', '新建分类', '请输入分类名称', function (value) {
@@ -250,7 +270,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                                     '#categorySelector',
                                     '#categorySelector',
                                     function () {
-                                        $('#categorySelector').val(value).trigger('change');
+                                        $('#categorySelector').val(value);
+                                        $('#categorySelector').trigger('change');
+                                        bindEvent();
                                     },
                                     formData
                                 );
@@ -263,7 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                         var currentUrl = new URL(window.location.href);
                         currentUrl.searchParams.set('category', category);
                         history.pushState({}, '', currentUrl);
-                        fetchAndReplaceContent(currentUrl.toString(), '.list', '.list');
+                        fetchAndReplaceContent(currentUrl.toString(), '.list', '.list', bindEvent);
                     });
                 </script>
                 <footer></footer>
@@ -301,15 +323,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                         }
                     }
                     ?>
-                    <script>
-                        $('.list a').on('click', function (event) {
-                            event.preventDefault();
-                            history.pushState('', '', this.href);
-                            fetchAndReplaceContent(this.href, 'title,content', 'title,content', () => {
-                                setActiveLinkInList($('.list'));
-                            });
-                        });
-                    </script>
                 </ul>
                 <footer></footer>
             </lead>
@@ -387,7 +400,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                                         echo 'value="' . end($path) . '"';
                                     }
                                     ?>>&nbsp;
-                                <button type="submit" class="btn btn-shadow btn-success btn-md">提交更改</button>
+                                <button id="saveButton" type="submit" class="btn btn-shadow btn-success btn-md">提交更改</button>
                             </span>
                             <input type="hidden" name="action" value="editPost">
                             <div id="md-content">
@@ -415,8 +428,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                             var saving = false;
                             $('#passage').on('submit', function (event) {
                                 event.preventDefault();
+                                if (saving) return;
+                                saving = true;
+
                                 const formData = formInputsToKeyPairs($(this));
-                                console.log(formData);
                                 fetchAndReplaceContent(
                                     window.location.href,
                                     '#postTitle,.list',
@@ -424,33 +439,48 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                                     () => {
                                         const urlParams = new URLSearchParams(new URL(window.location.href).search);
                                         urlParams.set('article', $('#postTitle').val());
+                                        urlParams.set('category', $('#categorySelector').val());
                                         history.pushState({}, '', window.location.href.split('?')[0] + '?' + urlParams.toString());
                                         setActiveLinkInList($('.list'));
+
+                                        // 重新绑定事件
+                                        bindEvent();
+                                        saving = false;
                                     },
                                     formData
                                 );
-                                // refreshMarkdownContent();
                             });
-                            var contentEditor = editormd("md-content", {
-                                width: "100%",
-                                height: 500,
-                                syncScrolling: "single",
-                                path: "https://assets.3r60.top/other/editormd/lib/",
-                                imageUpload: true,  // 开启图片上传功能
-                                imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],  // 支持的图片格式
-                                imageUploadURL: "./assets/imageUpload.php?password=<?php echo $_SESSION['RD_Password'] ?>",  // 上传图片的服务端地址
-                                toc: true,
-                                tocm: true,
-                                emoji: true,
-                                htmlDecode: true,
-                                taskList: true,
-                                tex: true,
-                                flowChart: true,
-                                sequenceDiagram: true,
-                                theme: getColorMode() ? 'dark' : 'default',
-                                editorTheme: getColorMode() ? '3024-night' : '3024-day',
-                                previewTheme: getColorMode() ? 'dark' : 'default'
+
+                            $(document).keydown(function (event) {
+                                if ((event.ctrlKey || event.metaKey) && (event.keyCode == 83 || event.keyCode == 115)) {
+                                    event.preventDefault();
+                                    $('#saveButton').click();
+                                }
                             });
+
+                            var contentEditor;
+                            $(document).ready(function () {
+                                contentEditor = editormd("md-content", {
+                                    width: "100%",
+                                    height: 500,
+                                    syncScrolling: "single",
+                                    path: "https://assets.3r60.top/other/editormd/lib/",
+                                    imageUpload: true,  // 开启图片上传功能
+                                    imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],  // 支持的图片格式
+                                    imageUploadURL: "./assets/imageUpload.php?password=<?php echo $_SESSION['RD_Password'] ?>",  // 上传图片的服务端地址
+                                    toc: true,
+                                    tocm: true,
+                                    emoji: true,
+                                    htmlDecode: true,
+                                    taskList: true,
+                                    tex: true,
+                                    flowChart: true,
+                                    sequenceDiagram: true,
+                                    theme: getColorMode() ? 'dark' : 'default',
+                                    editorTheme: getColorMode() ? '3024-night' : '3024-day',
+                                    previewTheme: getColorMode() ? 'dark' : 'default'
+                                });
+                            })
                             function setupPasteImage() {
                                 var editorElement = $('#' + contentEditor.id);
                                 editorElement.on("paste", function (event) {
@@ -479,10 +509,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
 
                                 fetch('./assets/imageUpload.php?password=<?php
                                 echo $_SESSION['RD_Password'] ?>', {
-                                                                                                                    method: 'POST',
+                                                                                                                                                                                    method: 'POST',
                                     body: formData
-                                                                                                                })
-                                                                                                                    .then(response => response.json())
+                                                                                                                                                                                })
+                                                                                                                                                                                    .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {
                                         var imageUrl = data.url;
@@ -496,7 +526,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                                     console.error('图片上传失败:', error);
                                     createMessage('图片上传失败:', data.message, 'danger');
                                 });
-                                                                                                            }
+                                                                                                                                                                            }
                             $(document).on('colorModeChanged', function (event, colorMode) {
                                 if (contentEditor !== null) {
                                     if (colorMode == 'dark') {
@@ -515,7 +545,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
                                 if ((event.ctrlKey || event.metaKey) && (event.keyCode == 83 || event.keyCode == 115)) {
                                     event.preventDefault();
                                     if (!saving) {
-                                        $('#passage').submit();
+                                        $('#saveButton').click();
                                         saving = false;
                                     }
                                 }
@@ -850,7 +880,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && password_verify($_SESSION['RD_Passwo
             "href": `javascript:createDialog(\"alert\", \"primary\", \"关于<?php echo addslashes($WebName) ?>\", \"<?php echo $copyRight ? str_replace('"', "'", htmlspecialchars_decode($copyRight)) . '<br>' : '' ?>软件版本：<?php echo $localVersion; ?><br><a href=\\\"https://docs.3r60.top/Project\\\">Ris_Docs</a>提供软件服务\")`
         }];
         let defaultFooterLinks = [];
-        let defaultCopyright = `<?php echo $copyRight ? htmlspecialchars_decode($copyRight) : '版权所有 © 2024 腾瑞思智' ?>`;
+        let defaultCopyright = `<?php echo $copyRight ? htmlspecialchars_decode($copyRight) : '版权所有 © 2025 腾瑞思智' ?>`;
         let webTitle = '<?php echo addslashes($WebName) ?? '瑞思文档' ?>';
         $(document).ready(function () {
             setTimeout('<?php

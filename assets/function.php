@@ -7,7 +7,7 @@ if (strpos($AdminPassword, '$2y$') !== 0 && strpos($AdminPassword, '$argon2i$') 
   addConfig('AdminPassword', password_hash($AdminPassword, PASSWORD_DEFAULT), __DIR__ . '/config.php');
 }
 //核心配置 (非必要不更改)
-$localVersion = "2.3(LTS)";
+$localVersion = "2.4.1";
 define('DOCS_DIRECTORY', __DIR__ . '/../docs/'); //文档存储位置
 define('DOCS_404', __DIR__ . '/../docs/404.md'); //404文档存储位置
 define('CONFIG_PATH', __DIR__ . '/config.php');
@@ -101,6 +101,15 @@ function includePlugin($env_requestPage, $input = '')
 }
 function loadArticle($Name, $echo = true)
 {
+  if (strpos($Name, 'search:') === 0) {
+    $Name = substr($Name, 7);
+    if ($echo) {
+      echo "# $Name 的搜索结果 \n 在左侧列表中选择以继续";
+      return;
+    } else {
+      return "# $Name 的搜索结果 \n 在左侧列表中选择以继续";
+    }
+  }
   $file = DOCS_DIRECTORY . $Name . ".md";
   if (file_exists($file)) {
     $html = includeFileContent("\n" . file_get_contents($file));
@@ -163,7 +172,7 @@ function loadDirectory($mode = "common", $category = "default")
 $purpose = isset($_GET['article']) ? $_GET['article'] : null;
 if (isset($purpose)) {
   $file = DOCS_DIRECTORY . $purpose . ".md";
-  if (!file_exists($file)) {
+  if (!file_exists($file) && strpos($purpose, 'search:') !== 0) {
     $pageName = "文档不存在";
   } else {
     $pageName = preg_replace('/\{M=\d+\}/', '', $purpose);
@@ -236,9 +245,9 @@ function generateMDIndex($directory, $parentPath = '', $isRoot = false, $mode = 
   foreach ($subdirectories as $dir) {
     if ($Rewrite == "true" && $mode == "common") {
       $articleLink = "//{$Http_Host_RW}/article/{$parentPath}" . urlencode($articleName);
-      $mdContent .= str_repeat("  ", count(explode("/", $parentPath)) - 1) . "- [$dir](//{$Http_Host_RW}/article/" . urlencode($dir) . "/index)\n";
+      $mdContent .= str_repeat("  ", count(explode("/", $parentPath)) - 1) . "- [$dir](//{$Http_Host_RW}/article/" . urlencode($dir) . ")\n";
     } else {
-      $mdContent .= str_repeat("  ", count(explode("/", $parentPath)) - 1) . "- [$dir]({$Http_Host}?article=" . urlencode($dir) . "/index" . $linkPlugin . ")\n";
+      $mdContent .= str_repeat("  ", count(explode("/", $parentPath)) - 1) . "- [$dir]({$Http_Host}?article=" . urlencode($dir) . "" . $linkPlugin . ")\n";
     }
     $mdContent .= generateMDIndex($directory . '/' . $dir, "{$parentPath}" . urlencode($dir) . '/', '', $mode);
   }
@@ -252,16 +261,68 @@ function generateHTMLIndex($directory, $parentPath = '', $isRoot = false, $mode 
     $category = basename($directory);
   }
 
+  // Handle search functionality
+  if (strpos($category, 'search:') === 0) {
+    $searchTerm = substr($category, 7);
+    $searchResults = [];
+
+    // Helper function to search recursively through directories
+    function searchInDirectory($dir, $term)
+    {
+      $results = [];
+      $files = scandir($dir);
+
+      foreach ($files as $file) {
+        if ($file != '.' && $file != '..' && $file != 'img' && $file != '404.md') {
+          $path = $dir . '/' . $file;
+          if (is_dir($path)) {
+            $results = array_merge($results, searchInDirectory($path, $term));
+          } elseif (pathinfo($file, PATHINFO_EXTENSION) == 'md') {
+            $content = file_get_contents($path);
+            $title = pathinfo($file, PATHINFO_FILENAME);
+            $category = basename(dirname($path));
+            if (stripos($content, $term) !== false || stripos($title, $term) !== false) {
+              $results[] = [
+                'path' => str_replace(DOCS_DIRECTORY, '', $path),
+                'title' => $category . ' > ' . preg_replace('/\{M=\d+\}/', '', $title)
+              ];
+            }
+          }
+        }
+      }
+      return $results;
+    }
+
+    $searchResults = searchInDirectory(DOCS_DIRECTORY, $searchTerm);
+
+    // Generate HTML for search results
+    foreach ($searchResults as $result) {
+      global $Http_Host, $Http_Host_RW, $Rewrite;
+      $encodedPath = ltrim(str_replace('.md', '', $result['path']), '/');
+
+      if ($Rewrite == "true" && $mode == "common") {
+        $articleLink = '//' . $Http_Host_RW . '/article/' . $encodedPath;
+      } else {
+        $articleLink = $Http_Host . '?article=' . $encodedPath;
+      }
+
+      $htmlContent .= '<li><a href="' . $articleLink . '">' . $result['title'] . '</a></li>' . "\n";
+    }
+
+    return '<ul>' . $htmlContent . '</ul>';
+  }
+
+  // Rest of the original function code remains the same
   if ($mode == "admin") {
     $linkPlugin = "?mode=editPost&SE=" . $_GET['SE'] . '&category=' . basename($category) . '&';
   } else {
     $linkPlugin = "?";
   }
 
-  // 扫描目录
-  $files = scandir($directory);
+  // Original directory scanning and processing code...
+  // [Previous code remains unchanged from here]
 
-  // 用于保存子目录和文件
+  $files = scandir($directory);
   $subdirectories = [];
   $subfiles = [];
 
@@ -281,16 +342,6 @@ function generateHTMLIndex($directory, $parentPath = '', $isRoot = false, $mode 
   global $Http_Host_RW;
   global $Rewrite;
 
-  // 处理首页
-  // if ($isRoot) {
-  //   if ($Rewrite == "true" && $mode == "common") {
-  //     $htmlContent .= '<li><a href="//' . $Http_Host_RW . '/article/home">首页</a></li>';
-  //   } elseif ($mode != "admin") {
-  //     $htmlContent .= '<li><a href="' . $Http_Host . $linkPlugin . 'article=home' . '">首页</a></li>';
-  //   }
-  // }
-
-  // 处理子文件
   $fileWeights = [];
   $fileNames = [];
 
@@ -324,7 +375,6 @@ function generateHTMLIndex($directory, $parentPath = '', $isRoot = false, $mode 
     $htmlContent .= str_repeat('  ', count(explode('/', $parentPath)) - 1) . '<li><a href="' . $articleLink . '">' . preg_replace('/\{M=\d+\}/', '', $articleName) . '</a></li>' . "\n";
   }
 
-  // 处理子目录
   foreach ($subdirectories as $dir) {
     $encodedDir = urlencode($dir);
     if ($Rewrite == "true" && $mode == "common") {

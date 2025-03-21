@@ -32,12 +32,20 @@ include './assets/function.php';
             }
             ?>
         ];
-        let defaultNavRightItems = [{
-            "text": "<i class=\"bi bi-info-circle\"></i>",
-            "href": `javascript:createDialog(\"alert\", \"primary\", \"关于<?php echo addslashes($WebName) ?>\", \"<?php echo $copyRight ? str_replace('"', "'", htmlspecialchars_decode($copyRight)) . '<br>' : '' ?>软件版本：<?php echo $localVersion; ?><br><a href=\\\"https://docs.3r60.top/Project\\\">Ris_Docs</a>提供软件服务\")`
-        }];
+        let defaultNavRightItems = [
+            {
+                "text": "<i class=\"bi bi-search\"></i>",
+                "href": `javascript:createDialog(\"type\", \"success\", \"内容搜索\", \"从所有分类中搜索标题标题与内容\", (text) => {searchContent(text)})`
+            }
+            , {
+                "text": "<i class=\"bi bi-info-circle\"></i>",
+                "href": `javascript:createDialog(\"alert\", \"primary\", \"关于<?php echo addslashes($WebName) ?>\", \"<?php echo $copyRight ? str_replace('"', "'", htmlspecialchars_decode($copyRight)) . '<br>' : '' ?>软件版本：<?php echo $localVersion; ?><br><a href=\\\"https://docs.3r60.top/Project\\\">Ris_Docs</a>提供软件服务\")`
+            }, {
+                "text": "<i class=\"bi bi-pen\"></i>",
+                "href": `JavaScript:window.location.href = '<?php echo $Rewrite ? '//' . $Http_Host_RW . '/admin.php' : './admin.php' ?>'`
+            }];
         let defaultFooterLinks = [];
-        let defaultCopyright = `<?php echo $copyRight ? htmlspecialchars_decode($copyRight) : '版权所有 © 2024 腾瑞思智' ?>`;
+        let defaultCopyright = `<?php echo $copyRight ? htmlspecialchars_decode($copyRight) : '版权所有 © 2025 腾瑞思智' ?>`;
         let webTitle = '<?php echo addslashes($WebName) ?? '瑞思文档' ?>';
     </script>
     <script src="https://assets.3r60.top/v3/package.js"></script>
@@ -47,75 +55,82 @@ include './assets/function.php';
 </head>
 
 <body>
-    <topbar data-homeUrl='<?php echo ($Rewrite == "true") ? '//' . $Http_Host_RW : '.' ?>'
-        data-showExpendButton='false'>
-        <div class="search">
-            <input type="text" placeholder="搜索" id="searchInput" />
-            <button onclick="searchArticle()">搜索</button>
-        </div>
+    <topbar data-homeUrl='<?php echo ($Rewrite == "true") ? '//' . $Http_Host_RW : '.' ?>' data-showExpendButton='false'
+        data-noactive='true'>
+
     </topbar>
     <main class="flex pb-0">
-        <?php if ($_GET['article'] === 'home/')
+        <?php if (isset($_GET['article']) && $_GET['article'] === 'home/')
+            $_GET['article'] = "home" ?>
+        <?php if (isset($_GET['article']) && $_GET['article'] === 'default/home')
             $_GET['article'] = "home" ?>
         <?php if (!empty($_GET['article']) && $_GET['article'] !== 'home'): ?>
-            <lead>
-                <ul class="list" data-loadFromFile='false' data-changeTitle='false'>
-                    <?php
-                    $category = 'default';
-                    if (!empty($_GET['article'])) {
-                        if (strpos($_GET['article'], '/') !== false) {
-                            $pathParts = explode('/', $_GET['article']);
-                            if (count($pathParts) > 1) {
-                                $category = $pathParts[0];
-                            }
-                        } else {
-                            $category = $_GET['article'];
-                        }
-                    }
-                    loadDirectory("common", $category);
-                    ?>
-                </ul>
-                <footer></footer>
-            </lead>
+            <?php
+            // 检查当前分类是否只有一个文章并且不是目录
+            $category = explode('/', $_GET['article'])[0];
+            $mdFiles = glob("docs/{$category}/*.md");
+            $singleArticle = count($mdFiles) === 1;
+
+            // 如果不是单文件，且不是直接访问文件，则显示侧边栏
+            $_GET['article'] = rtrim($_GET['article'], '/');
+            if (!$singleArticle):
+                ?>
+                <lead>
+                    <ul class="list" data-loadFromFile='false' data-changeTitle='false'>
+                        <?php loadDirectory("common", $category); ?>
+                    </ul>
+                    <footer></footer>
+                </lead>
+            <?php endif; ?>
         <?php endif; ?>
 
         <?php if (!empty($_GET['article']) && $_GET['article'] !== 'home'): ?>
-
-            <content class="markdown-body" style="padding-top:6px">
+            <content class="markdown-body"
+                style="padding-top:6px;<?php echo ($singleArticle) ? 'width:100%;margin-left: 0;' : ''; ?>">
                 <?php includePlugin('user'); ?>
-                <span class='pagePath'>
-                    <?php
-                    echo $WebName . '>' . $pageName ?>&nbsp;&nbsp;&nbsp;
-                    <span id="toolBox">
-                        <a href="javascript:startPrint();" class="colorNoToggle">
-                            <i class="bi bi-printer colorNoToggle" style="font-size:15px;"></i>
-                            打印模式</a>&nbsp;&nbsp;
-                        <a href="javascript:copyUrl(window.location.href)">
-                            <i class="bi bi-clipboard colorNoToggle" style="font-size:15px;"></i>
-                            复制链接</a>
+                <!-- Page Header -->
+                <?php if (!$singleArticle): ?>
+                    <span class='pagePath'>
+                        <?php echo $WebName . '>' . $pageName ?>&nbsp;&nbsp;&nbsp;
+                        <span id="toolBox">
+                            <a href="javascript:startPrint();" class="colorNoToggle">
+                                <i class="bi bi-printer colorNoToggle" style="font-size:15px;"></i>
+                                打印模式
+                            </a>&nbsp;&nbsp;
+                            <a href="javascript:copyUrl(window.location.href)">
+                                <i class="bi bi-clipboard colorNoToggle" style="font-size:15px;"></i>
+                                复制链接
+                            </a>
+                        </span>
                     </span>
-                </span>
+                <?php endif; ?>
+
+                <!-- Article Container -->
                 <div class="article-container">
                     <div style="margin-top:10px" id="test-editormd-view">
-
                         <?php
                         $article = $_GET['article'];
+                        // 如果是单文件分类，直接重定向到该文件
+                        if ($singleArticle && strpos($article, '/') === false) {
+                            $file = basename($mdFiles[0], '.md');
+                            $article = $category . '/' . $file;
+                        }
+
                         $fullPath = "docs/" . str_replace('/', DIRECTORY_SEPARATOR, $article);
+
                         if (is_dir($fullPath)) {
                             $category = explode('/', $article)[0];
                             $indexFile = "docs/{$category}/index.md";
 
                             if (!file_exists($indexFile)) {
-                                echo "<h1>{$category}</h1>";
-                                echo "<ul class='article-list'>";
-                                $files = glob("docs/{$category}/*.md");
-                                foreach ($files as $file) {
+                                // Display category listing
+                                echo "<h1>{$category}</h1><ul class='article-list'>";
+                                foreach (glob("docs/{$category}/*.md") as $file) {
                                     $name = basename($file, '.md');
                                     if ($name !== 'index') {
                                         $title = trim(file_get_contents($file, false, null, 0, 1000));
                                         preg_match('/^#\s*(.+)$/m', $title, $matches);
                                         $title = $matches[1] ?? $name;
-
                                         $link = $Rewrite == "true" ?
                                             "//{$Http_Host_RW}/article/{$category}/{$name}" :
                                             "./?article={$category}/{$name}";
@@ -124,40 +139,60 @@ include './assets/function.php';
                                 }
                                 echo "</ul>";
                             } else {
-                                echo '<textarea style="display:none" name="test-editormd-markdown-doc">';
-                                loadArticle($article);
-                                echo '</textarea>';
+                                // 处理index文件内容
+                                $content = loadArticle($article, false);
+                                if (preg_match('/<hero>(.*?)<\/hero>(.*)/s', $content, $matches)) {
+                                    echo $matches[1];
+                                    echo '<textarea style="display:none" name="test-editormd-markdown-doc">';
+                                    echo $matches[2];
+                                    echo '</textarea>';
+                                } else {
+                                    echo '<textarea style="display:none" name="test-editormd-markdown-doc">';
+                                    echo $content;
+                                    echo '</textarea>';
+                                }
                             }
                         } else {
-                            echo '<textarea style="display:none" name="test-editormd-markdown-doc">';
-                            loadArticle($article);
-                            echo '</textarea>';
+                            // 处理普通文章内容
+                            $content = loadArticle($article, false);
+                            // echo $article;
+                            if (preg_match('/<hero>(.*?)<\/hero>(.*)/s', $content, $matches)) {
+                                echo $matches[1];
+                                echo '<textarea style="display:none" name="test-editormd-markdown-doc">';
+                                echo $matches[2];
+                                echo '</textarea>';
+                            } else {
+                                echo '<textarea style="display:none" name="test-editormd-markdown-doc">';
+                                echo $content;
+                                echo '</textarea>';
+                            }
                         }
                         ?>
                     </div>
-                    <div class="article-toc" id="article-toc"></div>
-                    <span class="toc-placeholder"></span>
+                    <?php if (!$singleArticle): ?>
+                        <div class="article-toc" id="article-toc"></div>
+                        <span class="toc-placeholder"></span>
+                    <?php endif; ?>
                 </div>
             </content>
 
         <?php else: ?>
             <span style="width: 100%;">
                 <?php
-                echo '';
                 $content = loadArticle('home', false);
-                preg_match('/<hero>(.*?)<\/hero>(.*)/s', $content, $matches)
-                    ?>
-                <?php
-                echo $matches[1];
+                if (preg_match('/<hero>(.*?)<\/hero>(.*)/s', $content, $matches)) {
+                    echo $matches[1];
+                    $mdContent = $matches[2];
+                } else {
+                    $mdContent = $content;
+                }
                 ?>
                 <div class="markdown-body" style="width: 100%;">
                     <div class="article-container">
                         <div style="margin-top:10px" id="test-editormd-view">
                             <textarea style="display:none" name="test-editormd-markdown-doc">
-                                                        <?php
-                                                        echo $matches[2];
-                                                        ?>
-                                                        </textarea>
+                                                                    <?php echo $mdContent; ?>
+                                                                </textarea>
                         </div>
                     </div>
                 </div>
@@ -255,9 +290,6 @@ include './assets/function.php';
         $(document).ready(function () {
             setTimeout(() => {
                 $('a[href="./"]').attr('href', '<?php echo $_SERVER['DOCUMENT_ROOT'] ?>')
-                addButtonToNavRight('bi bi-pen', null, "#", () => {
-                    window.location.href = '<?php echo $Rewrite ? '//' . $Http_Host_RW . '/admin.php' : './admin.php' ?>'
-                });
             }, 1000)
         });
     </script>
@@ -272,17 +304,38 @@ include './assets/function.php';
     <script src="https://assets.3r60.top/other/editormd/editormd.js"></script>
     <script type="text/javascript">
 
+        function searchContent(text) {
+            event.preventDefault();
+            const search = text.toLowerCase();
+            const url = '<?php echo ($Rewrite == "true") ? '//' . $Http_Host_RW : '.' ?>/?article=search:' + text;
+            history.pushState('', '', url)
+            fetchAndReplaceContent(url, 'title,main', 'title,main', () => {
+                refreshMarkdownContent();
+                setActiveLinkInList($('.list'));
+            });
+
+        }
+
         function loadToc() {
             // 处理目录
             const tocContainer = document.getElementById('article-toc');
+            if (!tocContainer) return;
             const headings = document.querySelectorAll('.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6');
             const toc = document.createElement('ul');
+            const counters = { h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0 };
 
             headings.forEach(heading => {
                 const level = parseInt(heading.tagName.substring(1));
+                const tag = heading.tagName.toLowerCase();
+                counters[tag]++;
+                
+                // Generate unique ID based on text content
+                const uniqueId = `${tag}-${counters[tag]}-${heading.textContent.toLowerCase().replace(/\s+/g, '-')}`;
+                heading.id = uniqueId;
+
                 const li = document.createElement('li');
                 const a = document.createElement('a');
-                a.href = `#${heading.id}`;
+                a.href = `#${uniqueId}`;
                 a.textContent = heading.textContent;
                 a.style.paddingLeft = `${(level - 1) * 10}px`;
                 li.appendChild(a);
@@ -318,6 +371,9 @@ include './assets/function.php';
                     addStyle(colorMode == "dark");
                 }
             });
+
+
+            if (!location.hash) return;
             window.scrollTo({
                 top: document.querySelector(location.hash).offsetTop - 60,
                 behavior: 'smooth'
@@ -372,11 +428,19 @@ include './assets/function.php';
                 $('a[href="./"]').attr('href', '<?php echo ($Rewrite == "true") ? '//' . $Http_Host_RW : '.' ?>')
             }, 5000);
 
-            if ($('.navCenter .active').length > 1) {
-                $('.navCenter .active').first().removeClass('active');
-            }
+            $('.list a').off('click');
+            $('.category-item').off('click');
 
-            $('.list a, .category-item').on('click', function (event) {
+            $('.list a').on('click', function (event) {
+                event.preventDefault();
+                history.pushState('', '', this.href);
+                fetchAndReplaceContent(this.href, 'title,content', 'title,content', () => {
+                    refreshMarkdownContent();
+                    setActiveLinkInList($('.list'));
+                });
+            });
+
+            $('.category-item').on('click', function (event) {
                 event.preventDefault();
                 history.pushState('', '', this.href);
                 fetchAndReplaceContent(this.href, 'title,main', 'title,main', () => {
@@ -386,6 +450,7 @@ include './assets/function.php';
             });
 
             const headings = loadToc();
+            if (!headings) return;
 
             // 添加滚动监听
             const tocLinks = document.querySelectorAll('.article-toc a');
@@ -416,6 +481,7 @@ include './assets/function.php';
                     e.preventDefault();
                     const targetId = link.getAttribute('href').slice(1);
                     const targetElement = document.getElementById(targetId);
+                    if (!targetElement) return;
                     window.scrollTo({
                         top: targetElement.offsetTop - 80,
                         behavior: 'smooth'
@@ -424,8 +490,44 @@ include './assets/function.php';
             });
         }
 
+        function activeLink() {
+            let currentUrl = window.location.href;
+            let lastActive = null;
+            $('.navCenter li a').each(function () {
+                let href = $(this).attr('href');
+                if (href === '.') {
+                    if (currentUrl.endsWith('/') || currentUrl.endsWith('index.php')) {
+                        lastActive = $(this).parent();
+                    }
+                } else if (href && currentUrl.includes(href.replace(/^\./, ''))) {
+                    lastActive = $(this).parent();
+                }
+            });
+            $('.navCenter .active').removeClass('active');
+            if (lastActive) {
+                lastActive.addClass('active');
+            }
+        }
+
+        function waitforelement(selector, callback) {
+            if ($(selector).length) {
+                callback();
+            } else {
+                setTimeout(() => {
+                    waitforelement(selector, callback);
+                }, 100);
+            }
+        }
+
+        $(document).ready(function () {
+            waitforelement('.navCenter li a', () => {
+                activeLink();
+            });
+        });
+
         $(document).on("pageChanged", function () {
             refreshMarkdownContent();
+            activeLink();
         });
     </script>
 </body>
