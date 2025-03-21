@@ -175,7 +175,7 @@ include './assets/function.php';
                     <?php endif; ?>
                 </div>
                 <?php if ($singleArticle): ?>
-                    <footer></footer>
+                    <footer style="position: static;"></footer>
                 <?php endif; ?>
             </content>
 
@@ -194,11 +194,12 @@ include './assets/function.php';
                     <div class="article-container">
                         <div style="margin-top:10px" id="test-editormd-view">
                             <textarea style="display:none" name="test-editormd-markdown-doc">
-                                                                        <?php echo $mdContent; ?>
-                                                                    </textarea>
+                                                                                    <?php echo $mdContent; ?>
+                                                                                </textarea>
                         </div>
                     </div>
                 </div>
+                <footer style="position: static;"></footer>
             </span>
         <?php endif; ?>
     </main>
