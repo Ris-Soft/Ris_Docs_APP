@@ -499,7 +499,7 @@ include './assets/function.php';
                     if (currentUrl.endsWith('/') || currentUrl.endsWith('index.php')) {
                         lastActive = $(this).parent();
                     }
-                } else if (href && currentUrl.includes(href.replace(/^\./, ''))) {
+                } else if (href && decodeURIComponent(currentUrl).includes(decodeURIComponent(href.replace(/^\./, '')))) {
                     lastActive = $(this).parent();
                 }
             });
