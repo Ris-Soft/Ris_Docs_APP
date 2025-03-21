@@ -55,8 +55,7 @@ include './assets/function.php';
 </head>
 
 <body>
-    <topbar data-homeUrl='<?php echo ($Rewrite == "true") ? '//' . $Http_Host_RW : '.' ?>' data-showExpendButton='false'
-        data-noactive='true'>
+    <topbar data-homeUrl='<?php echo ($Rewrite == "true") ? '//' . $Http_Host_RW : '.' ?>' data-noactive='true'>
 
     </topbar>
     <main class="flex pb-0">
@@ -194,8 +193,8 @@ include './assets/function.php';
                     <div class="article-container">
                         <div style="margin-top:10px" id="test-editormd-view">
                             <textarea style="display:none" name="test-editormd-markdown-doc">
-                                                                                    <?php echo $mdContent; ?>
-                                                                                </textarea>
+                                                                                        <?php echo $mdContent; ?>
+                                                                                    </textarea>
                         </div>
                     </div>
                 </div>
