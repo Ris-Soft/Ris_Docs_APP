@@ -222,7 +222,7 @@ include './assets/function.php';
             position: fixed;
             top: 70px;
             right: 30px;
-            z-index: 1000;
+            z-index: 0;
         }
 
         .toc-placeholder {
