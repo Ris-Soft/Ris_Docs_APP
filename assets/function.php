@@ -7,7 +7,7 @@ if (strpos($AdminPassword, '$2y$') !== 0 && strpos($AdminPassword, '$argon2i$') 
   addConfig('AdminPassword', password_hash($AdminPassword, PASSWORD_DEFAULT), __DIR__ . '/config.php');
 }
 //核心配置 (非必要不更改)
-$localVersion = "2.4.1";
+$localVersion = "2.4.2";
 define('DOCS_DIRECTORY', __DIR__ . '/../docs/'); //文档存储位置
 define('DOCS_404', __DIR__ . '/../docs/404.md'); //404文档存储位置
 define('CONFIG_PATH', __DIR__ . '/config.php');

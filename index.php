@@ -168,14 +168,9 @@ include './assets/function.php';
                         }
                         ?>
                     </div>
-                    <?php if (!$singleArticle): ?>
                         <div class="article-toc" id="article-toc"></div>
                         <span class="toc-placeholder"></span>
-                    <?php endif; ?>
                 </div>
-                <?php if ($singleArticle): ?>
-                    <footer style="position: static;"></footer>
-                <?php endif; ?>
             </content>
 
         <?php else: ?>
@@ -188,6 +183,7 @@ include './assets/function.php';
                 } else {
                     $mdContent = $content;
                 }
+                $singleArticle = true;
                 ?>
                 <div class="markdown-body" style="width: 100%;">
                     <div class="article-container">
@@ -198,10 +194,10 @@ include './assets/function.php';
                         </div>
                     </div>
                 </div>
-                <footer style="position: static;"></footer>
             </span>
         <?php endif; ?>
     </main>
+        <footer style="position: static;"></footer>
     <style>
         .article-container {
             display: flex;
@@ -232,6 +228,7 @@ include './assets/function.php';
             overflow-y: hidden;
             position: sticky;
             top: 70px;
+            z-index: -1;
         }
 
         .article-toc ul {
@@ -287,6 +284,9 @@ include './assets/function.php';
             .toc-placeholder {
                 display: none;
             }
+        }
+        footer:nth-of-type(2) {
+            display: none;
         }
     </style>
     <script>
@@ -427,6 +427,12 @@ include './assets/function.php';
 
             addStyle(getColorMode());
 
+                    if ($('lead').length > 0) {
+                        $('footer').eq(1).hide();
+                    } else {
+                        $('footer').eq(0).show();
+                    }
+
             setTimeout(() => {
                 $('a[href="./"]').attr('href', '<?php echo ($Rewrite == "true") ? '//' . $Http_Host_RW : '.' ?>')
             }, 5000);
@@ -491,6 +497,7 @@ include './assets/function.php';
                     });
                 });
             });
+            $("main").css('display', 'flex');
         }
 
         function activeLink() {
